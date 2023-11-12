@@ -2,8 +2,8 @@ import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { ConnectWallet } from '@thirdweb-dev/react';
 import Image from 'next/image';
-import {headerLogo, shoe4} from '../pages/assets/images'
-import {hamburger} from '../pages/assets/icons';
+import {headerLogo, shoe4} from '../assets/images'
+import {hamburger} from '../assets/icons';
 
 export function Navbar(){
     return(
