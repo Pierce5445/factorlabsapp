@@ -1,109 +1,36 @@
-import { ConnectWallet } from "@thirdweb-dev/react";
-import styles from "../styles/Home.module.css";
-import Image from "next/image";
+//import { ConnectWallet } from "@thirdweb-dev/react";
+
+
+import { Navbar } from "../components/navbar";
+import { ConnectWallet } from '@thirdweb-dev/react';
+//import ERC20Project from "./erc20";
+//import Image from "next/image";
 import { NextPage } from "next";
+import Buttons from "../components/Buttons";
 
 const Home: NextPage = () => {
   return (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>
-            Welcome to{" "}
-            <span className={styles.gradientText0}>
-              <a
-                href="https://thirdweb.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                thirdweb.
-              </a>
-            </span>
-          </h1>
+    <div className=" mt-10 flex justify-evenly items-center flex-col lg:flex-row-reverse flex-grow pt-0 border-2 border-black">
 
-          <p className={styles.description}>
-            Get started by configuring your desired network in{" "}
-            <code className={styles.code}>src/index.js</code>, then modify the{" "}
-            <code className={styles.code}>src/App.js</code> file!
-          </p>
-
-          <div className={styles.connect}>
-            <ConnectWallet
-              dropdownPosition={{
-                side: "bottom",
-                align: "center",
-              }}
+        <div className="flex flex-col items-center lg:mr-48">
+          <div className="lg:mt-6 mt-2 flex flex-col w-64 h-72 rounded-2xl bg-slate-500"></div>
+          <div className="items-center flex flex-col text-center w-1/2 lg:w-min mt-10">
+            <input
+              id="file-input"
+              className="ml-24 lg:ml-40 pb-6 md:text-xl"
+              type="file"
+              //onChange={handleFileChange}
+              accept="image/*"
+              multiple
             />
           </div>
         </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://portal.thirdweb.com/"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/images/portal-preview.png"
-              alt="Placeholder preview of starter"
-              width={300}
-              height={200}
-            />
-            <div className={styles.cardText}>
-              <h2 className={styles.gradientText1}>Portal ➜</h2>
-              <p>
-                Guides, references, and resources that will help you build with
-                thirdweb.
-              </p>
-            </div>
-          </a>
-
-          <a
-            href="https://thirdweb.com/dashboard"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/images/dashboard-preview.png"
-              alt="Placeholder preview of starter"
-              width={300}
-              height={200}
-            />
-            <div className={styles.cardText}>
-              <h2 className={styles.gradientText2}>Dashboard ➜</h2>
-              <p>
-                Deploy, configure, and manage your smart contracts from the
-                dashboard.
-              </p>
-            </div>
-          </a>
-
-          <a
-            href="https://thirdweb.com/templates"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/images/templates-preview.png"
-              alt="Placeholder preview of templates"
-              width={300}
-              height={200}
-            />
-            <div className={styles.cardText}>
-              <h2 className={styles.gradientText3}>Templates ➜</h2>
-              <p>
-                Discover and clone template projects showcasing thirdweb
-                features.
-              </p>
-            </div>
-          </a>
+        <div >
+          <Buttons/>
         </div>
-      </div>
-    </main>
-  );
+        </div>
+
+    )
 };
 
 export default Home;
