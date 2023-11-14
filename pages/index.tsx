@@ -19,7 +19,12 @@ const Home: NextPage = () => {
   console.log(uris);
   const [signature, setSignature] = useState("N/A");
   const [address, setAddress] = useState("N/A");
-  const message = "Please sign me!";
+
+  // Constructing the message dynamically based on uploaded files
+  const message = uris.length > 0
+    ? `Please sign this IPFS link: ${uris[0]}`
+    : "Please sign me!";
+
   const sdk = useSDK();
 
   const signMessage = async () => {
@@ -51,7 +56,6 @@ const Home: NextPage = () => {
 
   return (
     <div className="w-full mt-10 flex flex-col lg:flex-row justify-evenly items-center flex-grow pt-0 border-2 border-black">
-
       {/* Responsive Container */}
       <div className="w-full lg:w-1/2 xl:w-1/3 mb-6">
         <div className="lg:mt-6 mt-2 overflow-auto flex flex-col w-full md:w-64 max-w-full md:max-w-full lg:max-w-full h-72 md:h-auto lg:h-72 rounded-none bg-slate-500 flex-shrink-0">
@@ -84,3 +88,4 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
