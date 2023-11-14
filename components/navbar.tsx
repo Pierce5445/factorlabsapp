@@ -20,7 +20,7 @@ export function Navbar() {
       <nav className="max container mx-auto flex justify-between items-center relative">
         <div className="flex items-center">
           <a href="https://www.factorlabs.io/" target="_blank" className="mr-4">
-            <Image src="/images/fl_logo.png" alt="FL Logo" width={50} height={50} />
+            <Image src="/images/StegoSig.png" alt="FL Logo" width={75} height={75} />
           </a>
           <p className="text-white text-lg font-semibold ">StegoSig</p>
         </div>

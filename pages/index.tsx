@@ -42,7 +42,6 @@ const Home: NextPage = () => {
   const renderUploadedFiles = () => {
     return uris.map((uri, index) => (
       <div key={index} className="mb-2 pl-2 ">
-        {/* Added left padding (pl-4) to the container */}
         <p className="text-xs overflow-ellipsis whitespace-normal break-words">
           {`Uploaded File ${index + 1}: ${uri}`}
         </p>
@@ -52,11 +51,14 @@ const Home: NextPage = () => {
 
   return (
     <div className="w-full mt-10 flex flex-col lg:flex-row justify-evenly items-center flex-grow pt-0 border-2 border-black">
-      <div className="flex flex-col items-center mb-6 lg:mb-0">
+
+      {/* Responsive Container */}
+      <div className="w-full lg:w-1/2 xl:w-1/3 mb-6">
         <div className="lg:mt-6 mt-2 overflow-auto flex flex-col w-full md:w-64 max-w-full md:max-w-full lg:max-w-full h-72 md:h-auto lg:h-72 rounded-none bg-slate-500 flex-shrink-0">
           {renderUploadedFiles()}
         </div>
       </div>
+
       <div className="w-full md:w-1/2 lg:w-1/3">
         <div {...getRootProps()} className="mb-6 text-center">
           <input {...getInputProps()} />
@@ -82,4 +84,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
