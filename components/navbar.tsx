@@ -22,7 +22,7 @@ export function Navbar() {
           <a href="https://www.factorlabs.io/" target="_blank" className="mr-4">
             <Image src="/images/fl_logo.png" alt="FL Logo" width={50} height={50} />
           </a>
-          <p className="text-white text-lg font-semibold">StegoSig</p>
+          <p className="text-white text-lg font-semibold ">StegoSig</p>
         </div>
 
         {/* Hamburger menu for mobile */}
@@ -33,7 +33,7 @@ export function Navbar() {
 
         {/* Navigation links for mobile */}
         {isDropdownOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-gray-900 z-10">
+          <div className=" lg:hidden absolute top-full left-0 right-0 bg-gray-900 z-10  rounded-3xl  ">
             <ul className="flex flex-col items-center mt-4 space-y-2 p-4">
               <Link href="/" className="text-white text-lg font-semibold py-2" onClick={closeDropdown}>
                 Embed

@@ -11,7 +11,7 @@ const activeChain =Sepolia;
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThirdwebProvider
-      clientId={process.env.NEXT_PUBLIC_TEMPLATE_CLIENT_ID}
+    clientId="82bebb0c030f9e1ce08a7579a04b14ad "
       activeChain={activeChain}
     >
       <Navbar/>
