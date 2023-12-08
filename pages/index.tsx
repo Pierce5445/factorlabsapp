@@ -67,7 +67,7 @@ const Home: NextPage = () => {
         <div {...getRootProps()} className="mb-6 text-center">
           <input {...getInputProps()} />
           <button className="w-full md:w-3/4 lg:w-2/3 mx-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Drop files here to upload to IPFS
+            Drop files to authenticate
           </button>
         </div>
         <div className="text-center space-y-4">
