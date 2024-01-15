@@ -20,9 +20,11 @@ export function Navbar() {
       <nav className="max container mx-auto flex justify-between items-center relative">
         <div className="flex items-center">
           <a href="https://www.factorlabs.io/" target="_blank" className="mr-4">
-            <Image src="/images/StegoSig.png" alt="FL Logo" width={75} height={75} />
+            {/* <Image src="/images/fl_logo.png" alt="FL Logo" width={40} height={40}  /> */}
+            <Image src="/images/fl_logo.png" alt="FL Logo" width={40} height={40} className="rounded-md"/>
           </a>
-          <p className="text-white text-lg font-semibold ">StegoSig</p>
+          <p className="text-white text-lg font-semibold ">DYS Genertaions</p>
+          
         </div>
 
         {/* Hamburger menu for mobile */}
@@ -49,7 +51,7 @@ export function Navbar() {
         )}
 
         {/* Navigation links for desktop */}
-        <ul className={`lg:flex justify-center items-center space-x-6 ${isDropdownOpen ? 'hidden' : 'hidden lg:flex'}`}>
+        {/* <ul className={`lg:flex justify-center items-center space-x-6 ${isDropdownOpen ? 'hidden' : 'hidden lg:flex'}`}>
           <Link href="/" className="text-white text-lg font-semibold">
             Embed
           </Link>
@@ -59,7 +61,7 @@ export function Navbar() {
           <Link href="" className="text-white text-lg font-semibold">
             Debug Contract
           </Link>
-        </ul>
+        </ul> */}
 
         {/* Connect wallet button */}
         <ConnectWallet btnTitle="Sign In" modalTitle="Select sign in method" />

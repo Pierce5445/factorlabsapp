@@ -1,91 +1,205 @@
-import { Navbar } from "../components/navbar";
-import { ConnectWallet, useSDK, useStorageUpload, MediaRenderer } from '@thirdweb-dev/react';
-import { use, useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { NextPage } from "next";
-import Buttons from "../components/Buttons";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import type { NextPage } from "next";
+import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import FileDropdown from "../components/FileDropdown";
+//import { MetaHeader } from "~~/components/MetaHeader";
+import VideoPlayer from "../components/VideoPlayer";
+import { css } from '@emotion/react';
+import { RingLoader } from 'react-spinners';
 
 const Home: NextPage = () => {
-  const [uris, setUris] = useState<string[]>([]);
-  const { mutateAsync: upload } = useStorageUpload();
-  const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      const _uris = await upload({ data: acceptedFiles });
-      setUris(_uris);
-    },
-    [upload]
-  );
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
-  console.log(uris);
-  const [signature, setSignature] = useState("N/A");
-  const [address, setAddress] = useState("N/A");
+  const initialVideoSrc = "https://s3.us-east-1.wasabisys.com/dys/generations/final_V12.mp4";
+  const [videoSrc, setVideoSrc] = useState<string>(initialVideoSrc);
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Constructing the message dynamically based on uploaded files
-  const message = uris.length > 0
-    ? `Please sign this IPFS link: ${uris[0]}`
-    : "Please sign me!";
+  // const handleFileSelectionChange = (label: string, selectedFolder: string) => {
+  //   // Handle the selected folder and label
+  //   console.log("Selected Label:", label);
+  //   console.log("Selected Items:", selectedValues);
 
-  const sdk = useSDK();
+  //   setSelectedValues((prevValues) => {
+  //     // Check if there's already a selected value for the current label
+  //     const index = prevValues.findIndex((value) => value.includes(label));
 
-  const signMessage = async () => {
-    const sig = await sdk?.wallet.sign(message);
+  //     const keyValue = { [label]: selectedFolder };
 
-    if (!sig) {
-      throw new Error('No signature!')
-    }
-    setSignature(sig);
+  //     // Update the value for the current label or add a new value
+  //     if (index !== -1) {
+  //       const updatedValues = [...prevValues];
+  //       // updatedValues[index] = `${label}_${selectedFolder}`;
+  //       updatedValues[index] = `${label}:${selectedFolder}`;
+  //       return updatedValues;
+  //     } else {
+  //       // return [...prevValues, `${label}_${selectedFolder}`];
+  //       return [...prevValues, `${label}:${selectedFolder}`];
+  //     }
+  //   });
+  // };
+
+  const handleFileSelectionChange = (label: string, selectedFolder: string) => {
+    setSelectedValues(prevValues => {
+      // Check if there's already a selected value for the current label
+      const index = prevValues.findIndex(value => value.includes(label));
+
+      // Create the attribute object for the current label and selectedFolder
+      const attribute = {
+        trait_type: label,
+        value: selectedFolder,
+      };
+
+      // Update the value for the current label or add a new value
+      if (index !== -1) {
+        const updatedValues = [...prevValues];
+        updatedValues[index] = JSON.stringify(attribute); // Cast the object to a string
+        return updatedValues;
+      } else {
+        return [...prevValues, JSON.stringify(attribute)]; // Cast the object to a string
+      }
+    });
   };
 
-  const recoverAddress = () => {
-    const addr = sdk?.wallet.recoverAddress(message, signature);
-    if (!addr) {
-      throw new Error('No signature');
+  // Transform selectedValues to the desired JSON format
+  // const transformedValues = {
+  //   attributes: selectedValues.map((value) => JSON.parse(value)),
+  // };
+
+  const handleUp = async (): Promise<void> => {
+    console.log("Selected Values:", selectedValues);
+    try {
+      const apiUrl: string = "/generate_specific";
+
+      // Send a POST request with empty JSON data
+      setLoading(true);
+      const response: AxiosResponse = await axios.post(apiUrl, { selectedValues });
+      const newVideoSrc = response.data["generated_video"];
+      console.log("Video url = ", newVideoSrc);
+
+      // Save the new videoSrc to localStorage
+      localStorage.setItem("videoSrc", newVideoSrc);
+
+      setVideoSrc(newVideoSrc);
+      setLoading(false);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        // The request was made, but the server responded with a status code
+        console.error("Error status:", axiosError.response.status);
+        console.error("Error data:", axiosError.response.data);
+      } else if (axiosError.request) {
+        // The request was made but no response was received
+        console.error("No response received");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error message:", axiosError.message);
+      }
     }
-    setAddress(addr);
+
+    // Rest of your handleUpload logic...
   };
 
-  const renderUploadedFiles = () => {
-    return uris.map((uri, index) => (
-      <div key={index} className="mb-2 pl-2 ">
-        <p className="text-xs overflow-ellipsis whitespace-normal break-words">
-          {`Uploaded File ${index + 1}: ${uri}`}
-        </p>
-      </div>
-    ));
+  useEffect(() => {
+    const savedVideoSrc = localStorage.getItem("videoSrc");
+
+    // Check if the saved videoSrc exists in localStorage and the file exists in the bucket
+    if (savedVideoSrc) {
+      fetch(savedVideoSrc)
+        .then(response => {
+          if (response.ok) {
+            setVideoSrc(savedVideoSrc);
+          } else {
+            // Handle the case where the file does not exist
+            console.error("The saved video file does not exist.");
+            setVideoSrc(initialVideoSrc); // Set to the initial value or handle accordingly
+          }
+        })
+        .catch(error => {
+          console.error("Error checking file existence:", error);
+        });
+    } else {
+      setVideoSrc(initialVideoSrc);
+    }
+  }, []);
+
+  const handleUpload = async (): Promise<void> => {
+    try {
+      const apiUrl: string = "/generate";
+
+      // Send a POST request with empty JSON data
+      const response: AxiosResponse = await axios.post(apiUrl, {});
+      const newVideoSrc = response.data["generated_video"];
+      console.log("Video url = ", newVideoSrc);
+
+      // Save the new videoSrc to localStorage
+      localStorage.setItem("videoSrc", newVideoSrc);
+
+      setVideoSrc(newVideoSrc);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        // The request was made, but the server responded with a status code
+        console.error("Error status:", axiosError.response.status);
+        console.error("Error data:", axiosError.response.data);
+      } else if (axiosError.request) {
+        // The request was made but no response was received
+        console.error("No response received");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error message:", axiosError.message);
+      }
+    }
   };
 
   return (
-    <div className="w-full mt-10 flex flex-col lg:flex-row justify-evenly items-center flex-grow pt-0 border-2 border-black">
-      {/* Responsive Container */}
-      <div className="w-full lg:w-1/2 xl:w-1/3 mb-6">
-        <div className="lg:mt-6 mt-2 overflow-auto flex flex-col w-full md:w-64 max-w-full md:max-w-full lg:max-w-full h-72 md:h-auto lg:h-72 rounded-none bg-slate-500 flex-shrink-0">
-          {renderUploadedFiles()}
-        </div>
-      </div>
+    <div className="flex items-center flex-col flex-grow pt-10">
+    <div className="px-5">
+      
+    </div>
 
-      <div className="w-full md:w-1/2 lg:w-1/3">
-        <div {...getRootProps()} className="mb-6 text-center">
-          <input {...getInputProps()} />
-          <button className="w-full md:w-3/4 lg:w-2/3 mx-auto bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Drop files to authenticate
-          </button>
+    <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
+      <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
+        <div className="flex flex-col text-center items-center max-w-lg">
+          {/* Use key to force remount when videoSrc changes */}
+          <VideoPlayer key={videoSrc} src={videoSrc} />
         </div>
-        <div className="text-center space-y-4">
-          <button onClick={signMessage} className="w-full md:w-3/4 lg:w-2/3 mx-auto px-4 py-2 bg-blue-500 text-white rounded">
-            Sign Message
+        <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
+          <BugAntIcon className="h-8 w-8 fill-secondary" />
+          <div className="py-4"></div>
+          <button onClick={handleUp} className="btn btn-primary" disabled={loading}>
+            Generate
           </button>
-          <p className="text-xs overflow-ellipsis whitespace-normal break-words">
-            {`Signature: ${signature}`}
-          </p>
-          <button onClick={recoverAddress} className="w-full md:w-3/4 lg:w-2/3 mx-auto px-4 py-2 bg-blue-500 text-white rounded">
-            Recover Address
-          </button>
-          <p className="mt-2 text-xs overflow-ellipsis whitespace-normal break-words">Address: {address}</p>
+          <div className="mb-4"></div>
+          {loading && (
+            <div className="spinner-container">
+              <RingLoader color="#36D7B7" loading={loading} size={50} />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <FileDropdown label="1_TORSO" onSelectionChange={handleFileSelectionChange} />
+          <br/>
+          <FileDropdown label="2_LEFTARM" onSelectionChange={handleFileSelectionChange} />
+          <br/>
+          <FileDropdown label="3_RIGHTARM" onSelectionChange={handleFileSelectionChange} />
+          <br/>
+          <FileDropdown label="4_HEAD" onSelectionChange={handleFileSelectionChange} />
+          <br/>
+          <FileDropdown label="5_BELLY" onSelectionChange={handleFileSelectionChange} />
+          <br/>
+          <FileDropdown label="6_LEFTLEG" onSelectionChange={handleFileSelectionChange} />
+          <br/>
+          <FileDropdown label="7_RIGHTLEG" onSelectionChange={handleFileSelectionChange} />
+          <br/>
+          <FileDropdown label="8_REARTORSO" onSelectionChange={handleFileSelectionChange} />
         </div>
       </div>
     </div>
-  );
-};
+  </div>
 
+);
+};
 export default Home;
 
