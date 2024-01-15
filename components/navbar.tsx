@@ -23,7 +23,7 @@ export function Navbar() {
             {/* <Image src="/images/fl_logo.png" alt="FL Logo" width={40} height={40}  /> */}
             <Image src="/images/fl_logo.png" alt="FL Logo" width={40} height={40} className="rounded-md"/>
           </a>
-          <p className="text-white text-lg font-semibold ">DYS Genertaions</p>
+          <p className="text-white text-lg font-semibold ">DYS Generations</p>
           
         </div>
 

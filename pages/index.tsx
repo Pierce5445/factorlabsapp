@@ -3,8 +3,10 @@ import Link from "next/link";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import type { NextPage } from "next";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+
 import FileDropdown from "../components/FileDropdown";
 //import { MetaHeader } from "~~/components/MetaHeader";
+
 import VideoPlayer from "../components/VideoPlayer";
 import { css } from '@emotion/react';
 import { RingLoader } from 'react-spinners';
@@ -14,30 +16,9 @@ const Home: NextPage = () => {
   const [videoSrc, setVideoSrc] = useState<string>(initialVideoSrc);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // const handleFileSelectionChange = (label: string, selectedFolder: string) => {
-  //   // Handle the selected folder and label
-  //   console.log("Selected Label:", label);
-  //   console.log("Selected Items:", selectedValues);
-
-  //   setSelectedValues((prevValues) => {
-  //     // Check if there's already a selected value for the current label
-  //     const index = prevValues.findIndex((value) => value.includes(label));
-
-  //     const keyValue = { [label]: selectedFolder };
-
-  //     // Update the value for the current label or add a new value
-  //     if (index !== -1) {
-  //       const updatedValues = [...prevValues];
-  //       // updatedValues[index] = `${label}_${selectedFolder}`;
-  //       updatedValues[index] = `${label}:${selectedFolder}`;
-  //       return updatedValues;
-  //     } else {
-  //       // return [...prevValues, `${label}_${selectedFolder}`];
-  //       return [...prevValues, `${label}:${selectedFolder}`];
-  //     }
-  //   });
-  // };
+  const [numberOfFolders, setNumberOfFolders] = useState<number | null>(null);
+  const [folderNames, setFolderNames] = useState<string[]>([]);
+  const project = "downsamp"
 
   const handleFileSelectionChange = (label: string, selectedFolder: string) => {
     setSelectedValues(prevValues => {
@@ -53,25 +34,19 @@ const Home: NextPage = () => {
       // Update the value for the current label or add a new value
       if (index !== -1) {
         const updatedValues = [...prevValues];
-        updatedValues[index] = JSON.stringify(attribute); // Cast the object to a string
+        updatedValues[index] = JSON.stringify(attribute); 
         return updatedValues;
       } else {
-        return [...prevValues, JSON.stringify(attribute)]; // Cast the object to a string
+        return [...prevValues, JSON.stringify(attribute)]; 
       }
     });
   };
 
-  // Transform selectedValues to the desired JSON format
-  // const transformedValues = {
-  //   attributes: selectedValues.map((value) => JSON.parse(value)),
-  // };
-
-  const handleUp = async (): Promise<void> => {
+  const handleUpload = async (): Promise<void> => {
     console.log("Selected Values:", selectedValues);
     try {
       const apiUrl: string = "/generate_specific";
 
-      // Send a POST request with empty JSON data
       setLoading(true);
       const response: AxiosResponse = await axios.post(apiUrl, { selectedValues });
       const newVideoSrc = response.data["generated_video"];
@@ -85,19 +60,14 @@ const Home: NextPage = () => {
     } catch (error) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {
-        // The request was made, but the server responded with a status code
         console.error("Error status:", axiosError.response.status);
         console.error("Error data:", axiosError.response.data);
       } else if (axiosError.request) {
-        // The request was made but no response was received
         console.error("No response received");
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.error("Error message:", axiosError.message);
       }
     }
-
-    // Rest of your handleUpload logic...
   };
 
   useEffect(() => {
@@ -123,34 +93,24 @@ const Home: NextPage = () => {
     }
   }, []);
 
-  const handleUpload = async (): Promise<void> => {
-    try {
-      const apiUrl: string = "/generate";
+  // Test for retrieving folders from repl env
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/get_folders?search_term=${project}`);
+        const data = await response.json();
 
-      // Send a POST request with empty JSON data
-      const response: AxiosResponse = await axios.post(apiUrl, {});
-      const newVideoSrc = response.data["generated_video"];
-      console.log("Video url = ", newVideoSrc);
-
-      // Save the new videoSrc to localStorage
-      localStorage.setItem("videoSrc", newVideoSrc);
-
-      setVideoSrc(newVideoSrc);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response) {
-        // The request was made, but the server responded with a status code
-        console.error("Error status:", axiosError.response.status);
-        console.error("Error data:", axiosError.response.data);
-      } else if (axiosError.request) {
-        // The request was made but no response was received
-        console.error("No response received");
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error message:", axiosError.message);
+        setNumberOfFolders(data.totalFolders); 
+        setFolderNames(data.folderNames); 
+        console.log("Number of Folders: ", numberOfFolders)
+        console.log("Names: ", folderNames)
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    }
-  };
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex items-center flex-col flex-grow pt-10">
@@ -167,7 +127,7 @@ const Home: NextPage = () => {
         <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
           <BugAntIcon className="h-8 w-8 fill-secondary" />
           <div className="py-4"></div>
-          <button onClick={handleUp} className="btn btn-primary" disabled={loading}>
+          <button onClick={handleUpload} className="btn btn-primary" disabled={loading}>
             Generate
           </button>
           <div className="mb-4"></div>
@@ -178,23 +138,17 @@ const Home: NextPage = () => {
           )}
         </div>
 
-        <div>
-          <FileDropdown label="1_TORSO" onSelectionChange={handleFileSelectionChange} />
-          <br/>
-          <FileDropdown label="2_LEFTARM" onSelectionChange={handleFileSelectionChange} />
-          <br/>
-          <FileDropdown label="3_RIGHTARM" onSelectionChange={handleFileSelectionChange} />
-          <br/>
-          <FileDropdown label="4_HEAD" onSelectionChange={handleFileSelectionChange} />
-          <br/>
-          <FileDropdown label="5_BELLY" onSelectionChange={handleFileSelectionChange} />
-          <br/>
-          <FileDropdown label="6_LEFTLEG" onSelectionChange={handleFileSelectionChange} />
-          <br/>
-          <FileDropdown label="7_RIGHTLEG" onSelectionChange={handleFileSelectionChange} />
-          <br/>
-          <FileDropdown label="8_REARTORSO" onSelectionChange={handleFileSelectionChange} />
+        <div className=" text-sky-900 ">
+            <FileDropdown project={project} label="1_TORSO" onSelectionChange={handleFileSelectionChange} /> <br/>
+            <FileDropdown project={project} label="2_LEFTARM" onSelectionChange={handleFileSelectionChange} /><br/>
+            <FileDropdown project={project} label="3_RIGHTARM" onSelectionChange={handleFileSelectionChange} /><br/>
+            <FileDropdown project={project} label="4_HEAD" onSelectionChange={handleFileSelectionChange} /><br/>
+            <FileDropdown project={project} label="5_BELLY" onSelectionChange={handleFileSelectionChange} /><br/>
+            <FileDropdown project={project} label="6_LEFTLEG" onSelectionChange={handleFileSelectionChange} /><br/>
+            <FileDropdown project={project} label="7_RIGHTLEG" onSelectionChange={handleFileSelectionChange} /><br/>
+            <FileDropdown project={project} label="8_REARTORSO" onSelectionChange={handleFileSelectionChange} /><br/>
         </div>
+
       </div>
     </div>
   </div>
