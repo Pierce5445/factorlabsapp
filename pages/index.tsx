@@ -70,6 +70,15 @@ const Home: NextPage = () => {
     }
   };
 
+  async function fetchHelloWorld() { 
+    try { 
+       const response = await axios.get('/response'); 
+       console.log(response.data); 
+    } catch (error) { 
+       console.error(error); 
+    } 
+   }
+
   useEffect(() => {
     const savedVideoSrc = localStorage.getItem("videoSrc");
 
@@ -131,6 +140,9 @@ const Home: NextPage = () => {
             Generate
           </button>
           <div className="mb-4"></div>
+          <div> 
+            <button onClick={fetchHelloWorld}>Click me</button> 
+          </div>
           {loading && (
             <div className="spinner-container">
               <RingLoader color="#36D7B7" loading={loading} size={50} />
