@@ -1,0 +1,9 @@
+{
+    "rewrites": [
+      { "source": "/upload", "destination": "https://docjanff.onrender.com/api/upload_video/scaffold_vid.mp4/" },
+      { "source": "/generate", "destination": "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-1fr3xisq48t8v.riker.replit.dev/api_call" },
+      { "source": "/generate_specific", "destination": "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-1fr3xisq48t8v.riker.replit.dev/api_generate" },
+      { "source": "/get_files/:path*", "destination": "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-1fr3xisq48t8v.riker.replit.dev/get_files/:path*" }
+    ]
+  }
+  

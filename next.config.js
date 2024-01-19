@@ -21,22 +21,22 @@ const nextConfig = {
       },
       {
         source: "/generate",
-        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-2gh41qc5pizqo.hacker.replit.dev/api_call",
+        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-1fr3xisq48t8v.riker.replit.dev/api_call",
         // destination: "https://docjan.varounhanooman4.repl.co/api_call/",
       },
       {
         source: "/generate_specific",
-        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-2gh41qc5pizqo.hacker.replit.dev/api_generate",
+        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-1fr3xisq48t8v.riker.replit.dev/api_generate",
         // destination: "https://docjan.varounhanooman4.repl.co/api_call/",
       },
       {
         source: "/response",
-        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-2gh41qc5pizqo.hacker.replit.dev/response",
+        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-1fr3xisq48t8v.riker.replit.dev/response",
         // destination: "https://docjan.varounhanooman4.repl.co/api_call/",
       },
       {
         source: "/get_files/:path*",
-        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-2gh41qc5pizqo.hacker.replit.dev/get_files/:path*",
+        destination: "https://49fd5f7c-0d25-427c-9860-bca614076d07-00-1fr3xisq48t8v.riker.replit.dev/get_files/:path*",
       },
     ];
   },
